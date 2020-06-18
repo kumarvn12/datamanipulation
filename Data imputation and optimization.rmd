@@ -1,0 +1,154 @@
+---
+title: "H10"
+output: word_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+```{r data}
+cancer <- read.csv("breast-cancer-wisconsin.data.txt",header=F,na.strings = '?')
+head(df)
+```
+```{r na}
+#  NA/missing values 
+sum(is.na.data.frame(cancer))
+```
+```{r pattern}
+#install.packages("mice")
+library('mice')
+md.pattern(cancer,plot = TRUE, rotate.names = FALSE)
+```
+#Multivariate Imputation by Chained Equations (MICE) package can be used to produce a table displaying the missing pattern . “1” indicates nonmissing value and “0” indicates missing value.
+```{r ma}
+#install.packages("naniar")
+library(naniar)
+vis_miss(cancer)
+```
+# variable V7 has missing values
+```{r imp}
+# Imputation
+tempData <- mice(cancer,m=5,maxit=50,meth='pmm',seed=500)
+summary(tempData)
+densityplot(tempData)
+```
+
+```{r vector}
+#impute using mean
+na_v = as.vector(cancer$V7)
+na = mean(na_v, na.rm = TRUE)
+mean_fn <- function(na_v) replace(na_v, is.na(na_v), mean(na_v, na.rm = T))
+# apply functioned defined above to impute missing values with mean of the colum
+df_mean <- as.data.frame(lapply(cancer, mean_fn))
+#number of missing values
+sum(is.na.data.frame(df_mean))
+```
+
+```{r regression}
+na_reg <-mice(cancer,method = 'norm.predict')
+df_regression <- complete(na_reg)
+#number of missing values 
+sum(is.na.data.frame(df_regression))
+```
+```{r plot1}
+densityplot(na_reg)
+```
+#The density of the imputed data for each imputed dataset is showed in red while the density of the observed data is showed in blue. as expected the distributions are similar.
+
+```{r pert}
+df_pert<-mice(cancer,method = 'norm.nob')
+df_perturb <- complete(df_pert)
+#number of missing values 
+sum(is.na.data.frame(df_perturb))
+```
+```{r plot2}
+densityplot(df_pert)
+
+```
+
+#The density of the imputed data for each imputed dataset is showed in red while the density of the observed data is showed in blue. as expected the distributions are similar.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
